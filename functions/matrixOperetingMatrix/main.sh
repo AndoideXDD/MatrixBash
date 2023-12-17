@@ -1,11 +1,10 @@
 #!/bin/bash
 separador=$1
-
-awk -F "$separador" 'FNR==NR {
-    for(i=0; i<=NF; ++i) a[FNR,i]=$i; next} 
-    {for(i=0; i<=NF; ++i) a[FNR,i]+=$i} 
-    END {
-        for(i=0; i<=NF; ++i) {line=a[i,1]
-            for (x=2; x<=FNR; x++) {line=a[i,x]","line};print line; line=""
-            } 
-             }' matriu.txt matriu2.txt 
+file1=$2
+file2=$3
+columns=$(tail -1 $file1 | awk  -F "$separador" '{print NF}')
+for ((colum=1;colum<=$columns; colum++ )) 
+do
+    awk  -F "$separador" 'FNR==NR {a[FNR]=$'$colum'; next} {a[FNR]+=$'$colum'} 
+    END {for (i=1; i<=FNR; i++) {print a[i]}}' $file1 $file2
+done
